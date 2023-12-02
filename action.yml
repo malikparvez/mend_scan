@@ -1,6 +1,6 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'mend scan'
+description: 'this action is used to scan your repository using mend'
+author: 'malikparvez'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
@@ -9,15 +9,23 @@ branding:
 
 # Define your inputs here.
 inputs:
-  milliseconds:
+  WS_APIKEY:
     description: 'Your input description here'
     required: true
-    default: '1000'
+  WS_USERKEY:
+    description: 'Your input description here'
+    required: true
+  WS_PRODUCTNAME:
+    description: 'Your input description here'
+    required: true
+  WS_PROJECTNAME:
+    description: 'Your input description here'
+    required: true
 
 # Define your outputs here.
-outputs:
-  time:
-    description: 'Your output description here'
+#outputs:
+#  time:
+#    description: 'Your output description here'
 
 runs:
   using: node20

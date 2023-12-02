@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import { exec } from 'child_process'
+import { downloadFile } from './download_jar'
 
 /**
  * The main function for the action.
@@ -7,16 +8,26 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const WS_APIKEY: string = core.getInput('WS_APIKEY')
+    const WS_USERKEY: string = core.getInput('WS_USERKEY')
+    const WS_PRODUCTNAME: string = core.getInput('WS_PRODUCTNAME')
+    const WS_PROJECTNAME = process.env.GITHUB_REPOSITORY || ''
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    core.debug('Starting mend scan')
+    process.env.WS_APIKEY = WS_APIKEY
+    process.env.WS_USERKEY = WS_USERKEY
+    process.env.WS_PRODUCTNAME = WS_PRODUCTNAME
+    process.env.WS_PROJECTNAME = WS_PROJECTNAME
+    await downloadFile()
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
+    exec('java -jar wss-unified-agent.jar', (error, stdout, stderr) => {
+      if (error) {
+        console.error('Error scanning the repository:', error)
+      } else {
+        console.log(stdout)
+      }
+    })
+    //java -jar wss-unified-agent.jar
     // Set outputs for other workflow steps to use
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
